@@ -63,7 +63,7 @@ class afficher_tkinter(tk.Tk):
                     word += '_'
 
         self.word.set(word)
-        self.Letters.set(str(guessed_letters)[1: -2])
+        self.Letters.set(str(guessed_letters)[1: -1].replace("'", ""))
 
     def update_labelVie(self, Nb_vie):
         self.Nb_Vie.set("Nombre de vies : " + str(Nb_vie))
