@@ -2,6 +2,7 @@ from utils import console_display
 from utils import console_input
 from utils.word_generator import WordGenerator
 from utils.console_input import ask_letter_or_word
+import utils.tkinter_display as tkd
 
 # Nombre de vies maximum
 MAX_LIVES = 8
@@ -15,6 +16,18 @@ class Game:
         # Mode debug
         self.debug = debug
 
+        self.tkinter = tkd.afficher_tkinter(self.on_click)
+
+        self.start()
+        self.tkinter.mainloop()
+
+    def on_click(self, letter_or_word):
+        if len(letter_or_word) == 1 :
+            is_word = False
+        else : is_word = True
+
+        self.play(letter_or_word, is_word)
+
     def reset(self):
         self.word = None
         self.word_size = None
@@ -27,26 +40,19 @@ class Game:
         if self.debug:
             print(f"Word chosen: {self.word}")
 
-        # Lancer la partie
-        self.play()
+        self.tkinter.update_labelMot(self.word, self.guessed_letters)
+        self.tkinter.update_labelVie(self.lives_left)
 
-    def play(self):
+    def play(self, letter_or_word, is_word):
         if self.word is None:
-            print("Error: Can't play without a word")
+            self.tkinter.create_alert('error', 'Aucun mot')
             return
-
-        # Affichage du mot avec les lettres devinées
-        console_display.print_word(self.word, self.guessed_letters)
-
-        # Demande à l'utilisateur une lettre
-        letter_or_word, is_word = console_input.ask_letter_or_word()
 
         # Si on a une lettre
         if not is_word:
             # Si la lettre a déjà été devinée, on la refuse
             if letter_or_word in self.guessed_letters:
-                print("Vous avez déjà deviné cette lettre")
-                self.play()
+                self.tkinter.create_alert('info', 'Vous avez déjà deviné cette lettre')
                 return
 
             # On ajoute à la liste des lettres devinées
@@ -55,22 +61,22 @@ class Game:
             # Si la lettre n'est pas dans le mot, on perd une vie
             if letter_or_word not in self.word:
                 self.lives_left -= 1
-                console_display.print_life_lost(self.lives_left)
+                self.tkinter.update_labelVie(self.lives_left)
+
+        # Affichage du mot avec les lettres devinées
+        self.tkinter.update_labelMot(self.word, self.guessed_letters)
 
         # Verification de victoire
         if self.has_won(letter_or_word, is_word):
-            console_display.print_victory()
+            self.tkinter.create_alert('info', 'Victoire !')
             self.end()
             return
 
         # Verification de défaite
         if self.has_lost(letter_or_word, is_word):
-            console_display.print_defeat()
+            self.tkinter.create_alert('info', 'Vous avez perdu !')
             self.end()
             return
-
-        # On continue le jeu
-        self.play()
 
     def has_lost(self, letter_or_word: str, is_word: bool) -> bool:
         """
@@ -120,7 +126,7 @@ class Game:
         self.update_best_score()
 
         # Affiche le meilleur score
-        console_display.print_best_score(self.best_score)
+        self.tkinter.update_labelMeilleurScore(self.best_score)
 
         # Demande à l'utilisateur s'il veut rejouer
         replay = console_input.ask_replay()
