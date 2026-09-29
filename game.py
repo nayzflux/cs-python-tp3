@@ -1,7 +1,7 @@
 from utils import console_display
 from utils import console_input
 from utils.word_generator import WordGenerator
-from utils.console_input import ask_letter
+from utils.console_input import ask_letter_or_word
 
 # Nombre de vies maximum
 MAX_LIVES = 8
@@ -39,29 +39,32 @@ class Game:
         console_display.print_word(self.word, self.guessed_letters)
 
         # Demande à l'utilisateur une lettre
-        letter = console_input.ask_letter()
+        letter_or_word, is_word = console_input.ask_letter_or_word()
 
-        # Si la lettre a déjà été devinée, on la refuse
-        if letter in self.guessed_letters:
-            print("Vous avez déjà deviné cette lettre")
-            return
+        # Si on a une lettre
+        if not is_word:
+            # Si la lettre a déjà été devinée, on la refuse
+            if letter_or_word in self.guessed_letters:
+                print("Vous avez déjà deviné cette lettre")
+                self.play()
+                return
 
-        # On ajoute à la liste des lettres devinées
-        self.guessed_letters.append(letter)
+            # On ajoute à la liste des lettres devinées
+            self.guessed_letters.append(letter_or_word)
 
-        # Si la lettre n'est pas dans le mot, on perd une vie
-        if letter not in self.word:
-            self.lives_left -= 1
-            console_display.print_life_lost(self.lives_left)
+            # Si la lettre n'est pas dans le mot, on perd une vie
+            if letter_or_word not in self.word:
+                self.lives_left -= 1
+                console_display.print_life_lost(self.lives_left)
 
         # Verification de victoire
-        if self.has_won():
+        if self.has_won(letter_or_word, is_word):
             console_display.print_victory()
             self.end()
             return
 
         # Verification de défaite
-        if self.has_lost():
+        if self.has_lost(letter_or_word, is_word):
             console_display.print_defeat()
             self.end()
             return
@@ -69,20 +72,30 @@ class Game:
         # On continue le jeu
         self.play()
 
-    def has_lost(self) -> bool:
+    def has_lost(self, letter_or_word: str, is_word: bool) -> bool:
         """
         Auteur: Nino BELAOUD
         But: Vérifie si le joueur a perdu la partie.
         """
+        # Si le joueur a deviné un mot, vérifier qu'il correspond au mot à deviner
+        if is_word and letter_or_word != self.word:
+            return True
+
+        # Sinon, verifier qu'il reste des vies
         return self.lives_left == 0
 
-    def has_won(self) -> bool:
+
+    def has_won(self, letter_or_word: str, is_word: bool) -> bool:
         """
         Auteur: Nino BELAOUD
         But: Vérifie si le joueur a gagné la partie.
         """
         if self.word is None:
             return False
+
+        # Si le joueur a deviné un mot, vérifier qu'il correspond au mot à deviner
+        if is_word:
+            return letter_or_word == self.word
 
         # Verifier que toutes les lettres du mot ont été devinées
         for letter in self.word:
