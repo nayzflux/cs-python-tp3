@@ -21,6 +21,7 @@ class WordGenerator:
             next(csv_reader) #on skip la première ligne
             for row in csv_reader: #on ajoute tous les mots
                 self.words.append(row[0])
+        csv_file.close()
 
     def choose_word(self):
         """
