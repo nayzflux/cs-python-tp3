@@ -26,6 +26,7 @@ class afficher_tkinter(tk.Tk):
         self.word=tk.StringVar()
         self.Nb_Vie = tk.StringVar()
         self.MeilleurScore = tk.StringVar()
+        self.Letters = tk.StringVar()
 
         self.MeilleurScore.set("Aucun score pour l'instant")
 
@@ -35,6 +36,7 @@ class afficher_tkinter(tk.Tk):
 
     def creer_widgets(self):
         self.labelMot = tk.Label(self, textvariable=self.word)
+        self.labelLettresGuessed = tk.Label(self, textvariable=self.Letters)
         self.labelVie = tk.Label(self, textvariable=self.Nb_Vie)
         self.labelMeilleurScore = tk.Label(self, textvariable=self.MeilleurScore)
 
@@ -45,6 +47,7 @@ class afficher_tkinter(tk.Tk):
         self.entry = tk.Entry(textvariable='')
 
         self.labelMot.pack()
+        self.labelLettresGuessed.pack()
         self.labelVie.pack()
         self.labelMeilleurScore.pack()
         tk.Label(self, image=self.sprite).pack()
@@ -60,6 +63,7 @@ class afficher_tkinter(tk.Tk):
                     word += '_'
 
         self.word.set(word)
+        self.Letters.set(str(guessed_letters)[1: -2])
 
     def update_labelVie(self, Nb_vie):
         self.Nb_Vie.set("Nombre de vies : " + str(Nb_vie))
