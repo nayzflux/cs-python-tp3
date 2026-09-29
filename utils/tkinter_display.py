@@ -64,55 +64,235 @@ class afficher_tkinter(tk.Tk):
             )
 
     def creer_widgets(self):
-        self.labelMot = tk.Label(
+        # =========================================================
+        # GRID PRINCIPALE
+        # =========================================================
+
+        # Une seule ligne qui prend toute la hauteur
+        self.grid_rowconfigure(0, weight=1)
+
+        # Gauche ≈ 55%, droite ≈ 45%
+        self.grid_columnconfigure(0, weight=55)
+        self.grid_columnconfigure(1, weight=45)
+
+        # =========================================================
+        # "DIV" GAUCHE
+        # =========================================================
+
+        self.frameGauche = tk.Frame(
             self,
-            textvariable=self.word
+            bg="white",
+            highlightthickness=3
         )
 
-        self.labelLettresGuessed = tk.Label(
-            self,
-            textvariable=self.Letters
+        self.frameGauche.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+            padx=(20, 10),
+            pady=20
         )
+
+        # 3 lignes dans la partie gauche
+        self.frameGauche.grid_rowconfigure(0, weight=1)
+        self.frameGauche.grid_rowconfigure(1, weight=3)
+        self.frameGauche.grid_rowconfigure(2, weight=2)
+
+        self.frameGauche.grid_columnconfigure(0, weight=1)
+
+        # =========================================================
+        # LIGNE DU HAUT : VIES + MEILLEUR SCORE
+        # =========================================================
+
+        self.frameInfos = tk.Frame(
+            self.frameGauche,
+            bg="white",
+            highlightthickness=3
+        )
+
+        self.frameInfos.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+            padx=10,
+            pady=10
+        )
+
+        # Deux colonnes égales
+        self.frameInfos.grid_columnconfigure(0, weight=1)
+        self.frameInfos.grid_columnconfigure(1, weight=1)
+        self.frameInfos.grid_rowconfigure(0, weight=1)
 
         self.labelVie = tk.Label(
-            self,
-            textvariable=self.Nb_Vie
+            self.frameInfos,
+            textvariable=self.Nb_Vie,
+            font=("Arial", 18),
+            bg="white",
+            relief="solid",
+            borderwidth=2
+        )
+
+        self.labelVie.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+            padx=(10, 5),
+            pady=10
         )
 
         self.labelMeilleurScore = tk.Label(
-            self,
-            textvariable=self.MeilleurScore
+            self.frameInfos,
+            textvariable=self.MeilleurScore,
+            font=("Arial", 18),
+            bg="white",
+            relief="solid",
+            borderwidth=2
         )
 
+        self.labelMeilleurScore.grid(
+            row=0,
+            column=1,
+            sticky="nsew",
+            padx=(5, 10),
+            pady=10
+        )
+
+        # =========================================================
+        # MILIEU GAUCHE : MOT À DEVINER
+        # =========================================================
+
+        self.labelMot = tk.Label(
+            self.frameGauche,
+            textvariable=self.word,
+            font=("Arial", 40, "bold"),
+            bg="white",
+            relief="solid",
+            borderwidth=2
+        )
+
+        self.labelMot.grid(
+            row=1,
+            column=0,
+            sticky="nsew",
+            padx=30,
+            pady=20
+        )
+
+        # =========================================================
+        # BAS GAUCHE
+        # =========================================================
+
+        self.frameCommandes = tk.Frame(
+            self.frameGauche,
+            bg="white",
+            highlightthickness=3
+        )
+
+        self.frameCommandes.grid(
+            row=2,
+            column=0,
+            sticky="nsew",
+            padx=60,
+            pady=30
+        )
+
+        self.frameCommandes.grid_columnconfigure(0, weight=3)
+        self.frameCommandes.grid_columnconfigure(1, weight=1)
+
+        self.frameCommandes.grid_rowconfigure(0, weight=1)
+        self.frameCommandes.grid_rowconfigure(1, weight=1)
+
+        # Lettres déjà essayées
+        self.labelLettresGuessed = tk.Label(
+            self.frameCommandes,
+            textvariable=self.Letters,
+            font=("Arial", 18),
+            bg="white",
+            text="Lettres utilisées"
+        )
+
+        self.labelLettresGuessed.grid(
+            row=0,
+            column=0,
+            columnspan=2,
+            sticky="nsew",
+            padx=10,
+            pady=10
+        )
+
+        # Champ de saisie
+        self.entry = tk.Entry(
+            self.frameCommandes,
+            font=("Arial", 22),
+            justify="center"
+        )
+
+        self.entry.grid(
+            row=1,
+            column=0,
+            sticky="nsew",
+            padx=(10, 5),
+            pady=10
+        )
+
+        # Bouton valider
         self.buttonSend = tk.Button(
-            self,
-            text='Valider',
+            self.frameCommandes,
+            text="Valider",
+            font=("Arial", 18),
             command=self.bouton_clique
         )
 
-        # IMPORTANT : garder le label dans self
-        self.labelSprite = tk.Label(self)
+        self.buttonSend.grid(
+            row=1,
+            column=1,
+            sticky="nsew",
+            padx=(5, 10),
+            pady=10
+        )
 
-        self.entry = tk.Entry(self)
+        # =========================================================
+        # "DIV" DROITE : IMAGE DU PENDU
+        # =========================================================
 
-        self.labelMot.pack()
-        self.labelLettresGuessed.pack()
-        self.labelVie.pack()
-        self.labelMeilleurScore.pack()
+        self.frameDroite = tk.Frame(
+            self,
+            bg="white",
+            highlightthickness=4
+        )
 
-        self.labelSprite.pack()
+        self.frameDroite.grid(
+            row=0,
+            column=1,
+            sticky="nsew",
+            padx=(10, 20),
+            pady=20
+        )
 
-        self.entry.pack()
-        self.buttonSend.pack()
+        self.frameDroite.grid_rowconfigure(0, weight=1)
+        self.frameDroite.grid_columnconfigure(0, weight=1)
+
+        self.labelSprite = tk.Label(
+            self.frameDroite,
+            bg="white"
+        )
+
+        self.labelSprite.grid(
+            row=0,
+            column=0,
+            sticky="nsew",
+            padx=40,
+            pady=40
+        )
 
     def update_labelMot(self, letter_or_word, guessed_letters):
         word = ''
 
         for letter in letter_or_word:
             if letter in guessed_letters:
-                word += letter
+                word += ' ' + letter + ' '
             else:
-                word += '_'
+                word += ' _ '
 
         self.word.set(word)
 
