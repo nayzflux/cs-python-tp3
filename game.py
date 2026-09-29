@@ -85,6 +85,7 @@ class Game:
         """
         # Si le joueur a deviné un mot, vérifier qu'il correspond au mot à deviner
         if is_word and letter_or_word != self.word:
+            self.tkinter.update_labelVie(0)
             return True
 
         # Sinon, verifier qu'il reste des vies
@@ -129,9 +130,11 @@ class Game:
         self.tkinter.update_labelMeilleurScore(self.best_score)
 
         # Demande à l'utilisateur s'il veut rejouer
-        replay = console_input.ask_replay()
+        replay = self.tkinter.ask_replay()
 
         if replay:
             self.reset()
             self.start()
             return
+        else:
+            self.tkinter.destroy()
